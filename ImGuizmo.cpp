@@ -2214,7 +2214,7 @@ namespace ImGuizmo
          frustum[i].Normalize();
       }
    }
-
+   
    void DrawCubes(const float* view, const float* projection, const float* matrices, int matrixCount)
    {
       matrix_t viewInverse;
@@ -2599,4 +2599,86 @@ namespace ImGuizmo
       // restore view/projection because it was used to compute ray
       ComputeContext(svgView.m16, svgProjection.m16, gContext.mModelSource.m16, gContext.mMode);
    }
+
+   /////////////////////////////////////
+   /////////////////////////////////////
+   /////////////////////////////////////
+   /* AieKick 09/08/2018 */
+   bool DrawPoint(const float* view, const float* projection, const float* matrix, const char* text, float radius, bool vShowIcon, bool vShowText)
+   {
+      ImGuiWindow* window = ImGui::GetCurrentWindow();
+      if (window->SkipItems)
+         return false;
+
+      matrix_t res = *(matrix_t*)matrix * *(matrix_t*)view * *(matrix_t*)projection;
+
+      ImVec2 textSize = ImGui::CalcTextSize(text);
+      ImVec2 pt = worldToPos(makeVect(0.0f, 0.0f, 0.0f), res);
+
+      bool hovered = false;
+      bool pressed = false;
+
+      ImVec2 rd = ImGui::GetMousePos() - pt;
+      if (rd.x * rd.x + rd.y * rd.y < radius * radius)
+      {
+         pressed = ImGui::IsMouseClicked(0);
+         hovered = true;
+      }
+
+      ImVec4 fillColor =
+         (pressed ? ImVec4(1.0f, 1.f, 0.2f, 1.0f) :
+            (hovered ? ImVec4(0.2f, 1.0f, 1.0f, 1.0f) :
+               ImVec4(0.2f, 0.2f, 1.0f, 1.0f)));
+
+      if (vShowIcon)
+      {
+         window->DrawList->AddCircleFilled(pt, radius, ImGui::GetColorU32(fillColor), 12);
+         window->DrawList->AddCircle(pt, radius, ImGui::GetColorU32(ImVec4(0.0f, 0.0f, 0.0f, 1.0f)), 12, 2.0f);
+      }
+      if (vShowText)
+      {
+         window->DrawList->AddText(pt - ImVec2(textSize.x * 0.5f, radius * 1.5f + textSize.y), ImGui::GetColorU32(ImVec4(1.0f, 1.0f, 1.0f, 1.0f)), text);
+      }
+
+      return pressed;
+   }
+
+   /* AieKick 16/05/2019 */
+   void DrawNormal(float x, float y, float nx, float ny, float nz, const float* view, const float* projection, float radius, float thickness, float length)
+   {
+      ImGuiWindow* window = ImGui::GetCurrentWindow();
+      if (window->SkipItems)
+         return;
+
+      matrix_t res = *(matrix_t*)view * *(matrix_t*)projection;
+
+      auto pos = makeVect(0, 0, 0);
+      auto nor = makeVect(nx, ny, nz);
+
+      ImVec2 pt0 = worldToPos(pos, res) + ImVec2(x, y);
+      ImVec2 pt1 = worldToPos(pos + nor * length, res) + ImVec2(x, y);
+
+      window->DrawList->AddCircleFilled(pt0, 5.0, ImColor(50, 100, 50), 12);
+      window->DrawList->AddCircle(pt0, radius, ImColor(200, 200, 200), 12, 2.0f);
+      window->DrawList->AddLine(pt0, pt1, ImColor(200, 200, 100), thickness);
+   }
+
+   /* AieKick 16/06/2019 */
+   inline ImVec2 ImNormalize(ImVec2 v)
+   {
+      float l = ImSqrt(ImLengthSqr(v));
+      if (l > 0.0f)
+         return v / l;
+      return ImVec2(0.0f, 0.0f);
+   }
+
+   /* AieKick 08/08/2018 */
+   void InitMVP(const float* view, const float* projection, float* matrix, MODE mode)
+   {
+      ImGuizmo::ComputeContext(view, projection, matrix, mode);
+   }
+   /////////////////////////////////////
+   /////////////////////////////////////
+   /////////////////////////////////////
+
 };

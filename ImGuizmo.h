@@ -177,6 +177,13 @@ namespace ImGuizmo
       WORLD
    };
 
+   /////////////////////////////////////
+   // aiekick
+   IMGUI_API bool DrawPoint(const float* view, const float* projection, const float* matrix, const char* text, float radius, bool vShowIcon, bool vShowText);
+   IMGUI_API void DrawNormal(float x, float y, float nx, float ny, float nz, const float* view, const float* projection, float radius, float thickness, float length);
+   IMGUI_API void InitMVP(const float* view, const float* projection, float* matrix, MODE mode);
+   /////////////////////////////////////
+
    IMGUI_API bool Manipulate(const float* view, const float* projection, OPERATION operation, MODE mode, float* matrix, float* deltaMatrix = NULL, const float* snap = NULL, const float* localBounds = NULL, const float* boundsSnap = NULL);
    //
    // Please note that this cubeview is patented by Autodesk : https://patents.google.com/patent/US7782319B2/en
