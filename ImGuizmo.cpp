@@ -2635,6 +2635,7 @@ namespace ImGuizmo
          window->DrawList->AddCircleFilled(pt, radius, ImGui::GetColorU32(fillColor), 12);
          window->DrawList->AddCircle(pt, radius, ImGui::GetColorU32(ImVec4(0.0f, 0.0f, 0.0f, 1.0f)), 12, 2.0f);
       }
+
       if (vShowText)
       {
          window->DrawList->AddText(pt - ImVec2(textSize.x * 0.5f, radius * 1.5f + textSize.y), ImGui::GetColorU32(ImVec4(1.0f, 1.0f, 1.0f, 1.0f)), text);
@@ -2677,6 +2678,7 @@ namespace ImGuizmo
    {
       ImGuizmo::ComputeContext(view, projection, matrix, mode);
    }
+
    /////////////////////////////////////
    /////////////////////////////////////
    /////////////////////////////////////
